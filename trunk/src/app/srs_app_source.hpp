@@ -64,6 +64,7 @@ class SrsRtmpJitter
 private:
     int64_t last_pkt_time;
     int64_t last_pkt_correct_time;
+    int64_t last_pkt_system_time;
 public:
     SrsRtmpJitter(int64_t last_pkt_time=0);
     virtual ~SrsRtmpJitter();
