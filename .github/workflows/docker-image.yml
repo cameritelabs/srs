@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ camerite, camerite-dev ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      if: ${{ github.ref == 'refs/heads/camerite-dev' }}
+      run: docker build . -f trunk/Dockerfile --tag=cameritegeneric.azurecr.io/camerite_srs:stage
+
+    - name: Push Docker image
+      if: ${{ github.ref == 'refs/heads/camerite-dev' }}
+      run: docker push cameritegeneric.azurecr.io/camerite_srs:stage 
+      
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      if: ${{ github.ref == 'refs/heads/camerite' }}
+      run: docker build . -f trunk/Dockerfile --tag=cameritegeneric.azurecr.io/camerite_srs:latest
+
+    - name: Push Docker image
+      if: ${{ github.ref == 'refs/heads/camerite' }}
+      run: docker push cameritegeneric.azurecr.io/camerite_srs:latest 
