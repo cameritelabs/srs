@@ -25,11 +25,12 @@
 #define RTMP_SIG_SRS_LICENSE "MIT"
 #define RTMP_SIG_SRS_AUTHORS "https://github.com/ossrs/srs/blob/4.0release/trunk/AUTHORS.txt"
 #define RTMP_SIG_SRS_VERSION SRS_XSTR(VERSION_MAJOR) "." SRS_XSTR(VERSION_MINOR) "." SRS_XSTR(VERSION_REVISION)
+#define CAMERITE_VERSION RTMP_SIG_SRS_VERSION ".rev" SRS_XSTR(CAMERITE_REVISION)
 #define RTMP_SIG_SRS_SERVER RTMP_SIG_SRS_KEY "/" RTMP_SIG_SRS_VERSION "(" RTMP_SIG_SRS_CODE ")"
 #define RTMP_SIG_SRS_DOMAIN "ossrs.net"
 
 // The current stable release.
-#define VERSION_STABLE 3
+#define VERSION_STABLE 4
 #define VERSION_STABLE_BRANCH SRS_XSTR(VERSION_STABLE) ".0release"
 
 // For 32bit os, 2G big file limit for unistd io,
@@ -54,7 +55,9 @@
 #endif
 
 #include <assert.h>
+#ifndef srs_assert
 #define srs_assert(expression) assert(expression)
+#endif
 
 #include <stddef.h>
 #include <sys/types.h>
@@ -81,10 +84,9 @@
     } \
     (void)0
 
-// Checking for st(state-threads), only support the following cpus: i386/amd64/x86_64/arm
-// @reamrk To patch ST for arm, read https://github.com/ossrs/state-threads/issues/1
-#if !defined(__amd64__) && !defined(__x86_64__) && !defined(__i386__) && !defined(__arm__) && !defined(__aarch64__)
-    #error "only support i386/amd64/x86_64/arm cpu"
+// Check CPU for ST(state-threads), please read https://github.com/ossrs/state-threads/issues/22
+#if !defined(__amd64__) && !defined(__x86_64__) && !defined(__i386__) && !defined(__arm__) && !defined(__aarch64__) && !defined(__mips__)
+    #error "Only support i386/amd64/x86_64/arm/aarch64/mips cpu"
 #endif
 
 // Error predefined for all modules.
@@ -93,7 +95,7 @@ typedef SrsCplxError* srs_error_t;
 
 #include <string>
 // The context ID, it default to a string object, we can also use other objects.
-// @remark User can directly user string as SrsContextId, we user struct to ensure the context is an object.
+// @remark User can directly use string as SrsContextId, we use struct to ensure the context is an object.
 #if 1
 class _SrsContextId
 {
